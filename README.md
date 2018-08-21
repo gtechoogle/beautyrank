@@ -1,2 +1,2 @@
 # beautyrank
-android app to rank the beatuy
+android app to rank the beauty
