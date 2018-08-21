@@ -8,9 +8,7 @@ public class BeautyRankApplication extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
-
-        AVOSCloud.initialize(this,"9lfX0v0OP2W1GquYUHjFVxnJ-gzGzoHsz","ShoVq7eFtV7eV1PDT6deCTNg");
+        AVOSCloud.initialize(this,getString(R.string.appid),getString(R.string.clientkey));
         AVOSCloud.setDebugLogEnabled(true);
-
     }
 }

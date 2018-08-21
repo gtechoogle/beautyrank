@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">BeautyRank</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="appid">9lfX0v0OP2W1GquYUHjFVxnJ-gzGzoHsz</string>
+    <string name="clientkey">ShoVq7eFtV7eV1PDT6deCTNg</string>
+    <string name="datasheet_id">5b7ae77c67f356005f9b0589</string>
 </resources>

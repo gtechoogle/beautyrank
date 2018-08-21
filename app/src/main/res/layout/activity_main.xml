@@ -9,23 +9,10 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="300dp"
-        android:onClick="add_user"
-        android:text="Add user"
-        app:layout_constraintLeft_toLeftOf="parent"
-        tools:layout_editor_absoluteY="101dp" />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="Download"
         android:id="@+id/B1"
         android:onClick="download_json"
         app:layout_constraintRight_toRightOf="parent"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Json"
-        android:onClick="Json" />
 
     <ImageView
         android:id="@+id/image"
