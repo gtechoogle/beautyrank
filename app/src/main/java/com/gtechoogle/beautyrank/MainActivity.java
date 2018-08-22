@@ -9,17 +9,11 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.avos.avoscloud.AVException;
-import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVObject;
-import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
-import com.avos.avoscloud.GetCallback;
-import com.avos.avoscloud.GetDataCallback;
 import com.avos.avoscloud.SaveCallback;
 import com.avos.avoscloud.SignUpCallback;
-import com.google.gson.GsonBuilder;
 import com.gtechoogle.beautyrank.bean.Beauty;
-import com.gtechoogle.beautyrank.network.DownloadInterface;
 import com.gtechoogle.beautyrank.network.DownloadManager;
 import com.squareup.picasso.Picasso;
 
@@ -38,12 +32,12 @@ public class MainActivity extends Activity {
             super.handleMessage(msg);
             switch (msg.what) {
                 case Constants.MSG_GET_DATA:
-                    hanldeGetData(msg);
+                    handleData(msg);
             }
         }
     };
 
-    private void hanldeGetData(Message msg) {
+    private void handleData(Message msg) {
         if (msg.obj instanceof Beauty )
         mBeautyData = (Beauty) msg.obj;
         for (Beauty.DatasheetBean datasheet : mBeautyData.getDatasheet()) {
