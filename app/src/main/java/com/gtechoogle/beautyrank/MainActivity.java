@@ -2,6 +2,8 @@ package com.gtechoogle.beautyrank;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,14 +19,46 @@ import com.avos.avoscloud.SaveCallback;
 import com.avos.avoscloud.SignUpCallback;
 import com.google.gson.GsonBuilder;
 import com.gtechoogle.beautyrank.bean.Beauty;
+import com.gtechoogle.beautyrank.network.DownloadInterface;
+import com.gtechoogle.beautyrank.network.DownloadManager;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends Activity {
     ImageView imageView;
+    DownloadManager downloadManager;
+    Beauty mBeautyData;
+    List<String> urls = new ArrayList<>();
+    int mIndex = 0;
+    Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case Constants.MSG_GET_DATA:
+                    hanldeGetData(msg);
+            }
+        }
+    };
+
+    private void hanldeGetData(Message msg) {
+        if (msg.obj instanceof Beauty )
+        mBeautyData = (Beauty) msg.obj;
+        for (Beauty.DatasheetBean datasheet : mBeautyData.getDatasheet()) {
+            for (Beauty.DatasheetBean.GalleryBean url: datasheet.getGallery()) {
+                urls.add(url.getUrl());
+            }
+        }
+        Log.d("saved", "value= " + urls);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        downloadManager = new DownloadManager(mHandler);
         imageView = findViewById(R.id.image);
         AVObject testObject = new AVObject("TestObject");
         testObject.put("words","Hello World!");
@@ -64,34 +98,36 @@ public class MainActivity extends Activity {
         });
     }
     public void download_json(View view) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    AVQuery<AVObject> avQuery = new AVQuery<>("DailyData");
-                    avQuery.getInBackground(getString(R.string.datasheet_id), new GetCallback<AVObject>() {
-                        @Override
-                        public void done(AVObject avObject, AVException e) {
-                            String url = (String) avObject.get("url");
-                            Log.d("saved","url = " + url);
-                            AVFile file = (AVFile) avObject.get("content");
-                            file.getDataInBackground(new GetDataCallback() {
-                                @Override
-                                public void done(byte[] bytes, AVException e) {
-                                    Log.d("saved","aaa = " + new String(bytes));
-                                    Beauty testGson = new GsonBuilder().create().fromJson(new String(bytes), Beauty.class);
-                                    String url = testGson.getDatasheet().get(0).getGallery().get(0).getUrl();
-                                    Picasso.get().load(url).into(imageView);
-                                }
-                            });
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.d("saved","Go to dead");
-                }
-            }
-        }).start();
+        downloadManager.sendRequest("DailyData",getString(R.string.datasheet_id));
+
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    AVQuery<AVObject> avQuery = new AVQuery<>("DailyData");
+//                    avQuery.getInBackground(getString(R.string.datasheet_id), new GetCallback<AVObject>() {
+//                        @Override
+//                        public void done(AVObject avObject, AVException e) {
+//                            String url = (String) avObject.get("url");
+//                            Log.d("saved","url = " + url);
+//                            AVFile file = (AVFile) avObject.get("content");
+//                            file.getDataInBackground(new GetDataCallback() {
+//                                @Override
+//                                public void done(byte[] bytes, AVException e) {
+//                                    Log.d("saved","aaa = " + new String(bytes));
+//                                    Beauty testGson = new GsonBuilder().create().fromJson(new String(bytes), Beauty.class);
+//                                    String url = testGson.getDatasheet().get(0).getGallery().get(0).getUrl();
+//                                    Picasso.get().load(url).into(imageView);
+//                                }
+//                            });
+//                        }
+//                    });
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    Log.d("saved","Go to dead");
+//                }
+//            }
+//        }).start();
 //        try {
 //            AVFile file = AVFile.withObjectId("5b6cf9c267f3560035a9fced");
 //            file.getDataInBackground(new GetDataCallback() {
@@ -113,5 +149,17 @@ public class MainActivity extends Activity {
     }
 
     public void Json(View view) {
+    }
+
+    public void next_pic(View view) {
+        if (mIndex >= urls.size()) {
+            mIndex = 0;
+        }
+        String url = urls.get(mIndex);
+        Picasso.get().load(url).into(imageView);
+        mIndex ++;
+    }
+
+    public void like_this(View view) {
     }
 }
