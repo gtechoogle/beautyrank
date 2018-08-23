@@ -10,7 +10,11 @@ import android.widget.ImageView;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.AVSaveOption;
 import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.FindCallback;
+import com.avos.avoscloud.GetCallback;
 import com.avos.avoscloud.SaveCallback;
 import com.avos.avoscloud.SignUpCallback;
 import com.gtechoogle.beautyrank.bean.Beauty;
@@ -155,5 +159,36 @@ public class MainActivity extends Activity {
     }
 
     public void like_this(View view) {
+//        AVObject favorite = new AVObject("Favorite");
+//        favorite.put("name", "杨幂");// 设置名称
+//        favorite.put("priority", 2);// 设置优先级
+//        favorite.saveInBackground();// 保存到服务端
+//        final AVQuery<AVObject> query = new AVQuery<>("Favorite");
+//        query.getFirstInBackground(new GetCallback<AVObject>() {
+//            @Override
+//            public void done(AVObject avObject, AVException e) {
+//                Log.d("saved","id = " + avObject.getObjectId());
+//                String queryName = (String) avObject.get("name");
+//                Log.d("saved","----- name = " + queryName);
+//            }
+//        });
+        AVQuery query = AVQuery.getQuery("Favorite");
+        query.findInBackground(new FindCallback() {
+            public void done(List objects, AVException e) {
+                List<AVObject> items = objects;
+                for (AVObject item : items ) {
+                    Log.d("saved", "id = " + item.getObjectId());
+                    Log.d("saved", "name = " + item.get("name"));
+                    int num = (int) item.get("priority");
+                    item.increment("priority",1);
+                    item.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(AVException e) {
+
+                        }
+                    });
+                }
+            }
+        });
     }
 }
