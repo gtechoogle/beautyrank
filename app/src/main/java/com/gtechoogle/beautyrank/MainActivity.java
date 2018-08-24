@@ -1,6 +1,7 @@
 package com.gtechoogle.beautyrank;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -190,5 +191,11 @@ public class MainActivity extends Activity {
                 }
             }
         });
+    }
+
+    public void Go_Nexe(View view) {
+        Intent intent = new Intent(MainActivity.this, AlbumActivity.class);
+        intent.putStringArrayListExtra("urls", (ArrayList<String>) urls);
+        startActivity(intent);
     }
 }
