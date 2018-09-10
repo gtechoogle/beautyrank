@@ -2,6 +2,7 @@ package com.gtechoogle.beautyrank;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -33,8 +34,16 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 //        holder.ivImage.setBackground(mCon.getDrawable(R.drawable.time));
-        String url = item.get(position);
+        final String url = item.get(position);
         Picasso.get().load(url).into(holder.ivImage);
+        holder.ivImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mCon,FullPicActivity.class);
+                intent.putExtra("url", url);
+                mCon.startActivity(intent);
+            }
+        });
     }
 
     @Override

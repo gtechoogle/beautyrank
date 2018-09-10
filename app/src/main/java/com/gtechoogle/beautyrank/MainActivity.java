@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -26,11 +28,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity {
-    ImageView imageView;
     DownloadManager downloadManager;
     Beauty mBeautyData;
     List<String> urls = new ArrayList<>();
     int mIndex = 0;
+    RecyclerView mCalendar;
+    CardViewAdapter mAdapter;
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -45,6 +48,7 @@ public class MainActivity extends Activity {
     private void handleData(Message msg) {
         if (msg.obj instanceof Beauty )
         mBeautyData = (Beauty) msg.obj;
+        mAdapter.setRawData(mBeautyData);
         for (Beauty.DatasheetBean datasheet : mBeautyData.getDatasheet()) {
             for (Beauty.DatasheetBean.GalleryBean url: datasheet.getGallery()) {
                 urls.add(url.getUrl());
@@ -58,21 +62,11 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         downloadManager = new DownloadManager(mHandler);
-        imageView = findViewById(R.id.image);
-        AVObject testObject = new AVObject("TestObject");
-        testObject.put("words","Hello World!");
-        Log.d("saved","start!");
-        testObject.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(AVException e) {
-                if(e == null){
-                    Log.d("saved","success!");
-                }
-            }
-        });
-//        String currentUsername = AVUser.getCurrentUser().getUsername();
-//        String currentEmail = AVUser.getCurrentUser().getEmail();
-//        Log.d("saved","currentUsername =" + currentUsername + " currentEmail = " + currentEmail);
+        downloadManager.sendRequest("DailyData",getString(R.string.datasheet_id));
+        mCalendar = findViewById(R.id.calendar_gallery);
+        mCalendar.setLayoutManager(new LinearLayoutManager(this));
+        mAdapter = new CardViewAdapter(this);
+        mCalendar.setAdapter(mAdapter);
     }
 
     public void add_user(View view) {
@@ -148,15 +142,6 @@ public class MainActivity extends Activity {
     }
 
     public void Json(View view) {
-    }
-
-    public void next_pic(View view) {
-        if (mIndex >= urls.size()) {
-            mIndex = 0;
-        }
-        String url = urls.get(mIndex);
-        Picasso.get().load(url).into(imageView);
-        mIndex ++;
     }
 
     public void like_this(View view) {
